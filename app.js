@@ -8,6 +8,8 @@ const Backend = require("i18next-fs-backend");
 const middleware = require("i18next-http-middleware");
 
 const userRouter = require("./src/Users/users.route");
+const roleRouter = require("./src/Roles/roles.route");
+const parkingRouter = require("./src/Parking/parking.route")
 
 i18next
   .use(Backend)
@@ -36,4 +38,6 @@ app.use(
   swaggerUI.setup(swaggerDocumentation)
 )
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/roles", roleRouter);
+app.use("/api/v1/parkings",parkingRouter);
 module.exports = app

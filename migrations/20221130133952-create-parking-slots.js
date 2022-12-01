@@ -1,7 +1,7 @@
 "use strict"
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("parkingSlots", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,49 +13,30 @@ module.exports = {
         allowNull: false,
         defaultValue: DataTypes.UUIDV4,
       },
-      name: {
+      slotCode: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue:"-"
       },
-      gender: {
+      slotSize:{
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue:"-"
       },
-      district: {
+      parking:{
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue:"-"
       },
-      sector: {
+      parkingName:{
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue:"-"
       },
-      province: {
+      status:{
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue:"-"
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      telNumber: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      password: {
-        type: DataTypes.STRING,
-      },
-      roleId: {
-        type: DataTypes.STRING,
-        defaultValue:"-"
-      },
-      roleName: {
-        type: DataTypes.STRING,
-        defaultValue: "User",
+        defaultValue:"Available"
       },
       createdAt: {
         allowNull: false,
@@ -65,25 +46,9 @@ module.exports = {
         allowNull: false,
         type: DataTypes.DATE,
       },
-      passwordResetToken: {
-        type: DataTypes.STRING,
-        defaultValue: "",
-      },
-      accountActivationToken: {
-        type: DataTypes.STRING,
-        defaultValue: "",
-      },
-      profilePicture: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        defaultValue: [],
-      },
-      active:{
-        type:DataTypes.BOOLEAN,
-        defaultValue:false
-      }
     })
   },
   async down(queryInterface, DataTypes) {
-    await queryInterface.dropTable("users")
+    await queryInterface.dropTable("parkingSlots")
   },
 }

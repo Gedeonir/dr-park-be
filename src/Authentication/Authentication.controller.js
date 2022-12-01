@@ -25,90 +25,109 @@ const resetToken = (uuid) => {
 const register = async (req, res) => {
   try {
 
-    const roleId = req.params.roleId;
-
     const {
       name,
-      idNumber,
       gender,
       district,
       sector,
-      cell,
+      province,
       email,
-      carplate,
-      capacity,
-      permitId,
       telNumber,
-      vehicletype,
+      password
     } = req.body;
-
-    const password = PassGenerator.generate({
-      length: 8,
-      numbers: true,
-    });
 
     const hashedPass = await bcrypt.hash(password, 12);
 
-    const user = await User.findOne({
+    const userEmailExist = await User.findOne({
       where: { email },
     });
 
-    if (user) {
+    if (userEmailExist) {
       return res.status(403).json({
-        message: req.t("existing user message"),
+        message: `${email} already exists`,
       });
     }
-
-    const role = await Role.findOne({ where: { uuid: roleId } });
-
-    if (!role) {
-      return res.status(403).json({
-        message: "Role does not exist",
-      });
-    }
+    const ACTIVATE_TOKEN = generateToken()
 
     const newUser = await User.create({
       name,
-      idNumber,
       gender,
       district,
       sector,
-      cell,
+      province,
       email,
-      carplate,
-      capacity,
-      password,
-      permitId,
       telNumber,
-      vehicletype,
-      roleId: role.id,
-      roleName: role.roleName,
       password: hashedPass,
+      accountActivationToken:ACTIVATE_TOKEN
     });
 
-    const URL = process.env.HEROKU_URL;
+    const URL = `https://localhost:${process.env.PORT}/activateAccount/${ACTIVATE_TOKEN}`;
     const message = `
     Dear ${newUser.name},
-    Congratulations, you are most welcome to Phantom Transport company the best transport services ever. please login to our plaform:${URL}, your username and password are the following: username:${newUser.email}, Password:${password}.
+    Congratulations, you are most welcome to Dr-park app. please use the link to verify your account:${URL}, your username and password are the following: username:${newUser.email}, Password:${password}.
     `;
     await sendEmail({
       email: newUser.email,
-      subject: "Congratulations, welcome to Phantom.",
+      subject: "Verify your account.",
       message,
     });
 
     res.status(201).json({
-      status: req.t("success status"),
-      message: req.t("email sent"),
+      message:"User created successfully,Check you email to verify your account",
       data: {
         user: newUser,
       },
     });
   } catch (error) {
     res.status(500).json({
-      status: req.t("fail status"),
-      message: req.t("try aaagain message"),
-      error: error,
+      message:"User account creation failed",
+      error: error.message,
+    });
+  }
+};
+
+const activateAccount=async(req,res)=>{
+
+  try {
+    /**
+     * Activate your account
+     */
+    const Token = req.params.token;
+
+    if (!Token) {
+      return res.status(401).json({
+        message: "No activation Token provided",
+      });
+    }
+
+    /**
+     * Check if user belongs to token exist in our database
+     */
+
+    const user = await User.findOne({
+      where: { accountActivationToken: Token },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        message: "The User belongs to this token doesn't exist",
+      });
+    }
+    user.active = true;
+    user.accountActivationToken = "";
+    await user.save();
+
+    /**
+     * Sending Result message to user.
+     */
+
+    res.status(200).json({
+      message: "Your Account has been activated successfully 👍🏾",
+    });
+  } catch (error) {
+    res.status(401).json({
+      message: "Something Went wrong!",
+      err: error,
     });
   }
 };
@@ -118,7 +137,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({
-        message: req.t("provide email & password"),
+        message:"Email and password must not be empty",
       });
     }
 
@@ -127,14 +146,13 @@ const login = async (req, res) => {
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({
-        message: req.t("invalid credentials"),
+        message:"Invalid email or password",
       });
     }
 
     const token = signToken(user.uuid);
     res.status(200).json({
-      status: req.t("success status"),
-      message: `${user.name} ${req.t("login success")}`,
+      message: `You are logged in as ${user.name}`,
       token,
       data: {
         user,
@@ -142,8 +160,7 @@ const login = async (req, res) => {
     });
   } catch (error) {
     res.status(401).json({
-      status: req.t("fail status"),
-      message: req.t("login error"),
+      message: "Login failed",
       err: error.stack,
       errorMessage: error,
     });
@@ -182,7 +199,6 @@ const forgotPassword = async (req, res) => {
       message,
     });
     res.status(200).json({
-      status: "sucess",
       message: "Token sent to email",
       token: Token,
     });
@@ -240,7 +256,6 @@ const resetPassword = async (req, res) => {
      */
 
     res.status(200).json({
-      status: "success",
       message: "Your password has been updated successfully 👍🏾",
     });
   } catch (error) {
@@ -293,4 +308,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   changePassword,
+  activateAccount
 };

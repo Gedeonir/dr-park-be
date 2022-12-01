@@ -239,7 +239,6 @@ const updateProfile = async (req, res,next) => {
           const { path } = file;
           imageURIs.push(path);
       };
-      console.log(imageURIs)
       user.profilePicture  = imageURIs;
       await user.save();
     
@@ -280,12 +279,11 @@ const deleteUser = async (req, res) => {
     await user.destroy();
 
     res.status(200).json({
-      status: "success status",
-      message:"user deleted message",
+      message:"User deleted succesfully",
     });
   } catch (error) {
     res.status(404).json({
-      message: "user wrong ID",
+      message: "User not found",
       Error: error.stack,
     });
   }

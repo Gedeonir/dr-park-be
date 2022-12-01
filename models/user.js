@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         ...this.get(),
         id: undefined,
         passwordResetToken: undefined,
+        accountActivationToken:undefined,
         updatedAt: undefined,
         createdAt: undefined,
         // isAssigned: undefined,
@@ -29,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notNull: { msg: "User must have a Role" },
+          notNull: { msg: "User must have a name" },
           notEmpty: { msg: "Role must not be empty" },
         },
       },
@@ -40,15 +41,6 @@ module.exports = (sequelize, DataTypes) => {
           notNull: { msg: "User must have a gender" },
           notEmpty: { msg: "Gender must not be empty" },
         },
-      },
-      idNumber: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "User must have an ID" },
-          notEmpty: { msg: "ID must not be empty" },
-        },
-        unique: true,
       },
 
       district: {
@@ -99,7 +91,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       roleId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
       },
       roleName: {
         type: DataTypes.STRING,
@@ -112,6 +104,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: [],
       },
+      accountActivationToken:{
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      active:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
+      }
     },
     {
       sequelize,

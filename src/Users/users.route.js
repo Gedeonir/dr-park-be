@@ -5,6 +5,7 @@ const {
   forgotPassword,
   resetPassword,
   changePassword,
+  activateAccount
 } = require("../Authentication/Authentication.controller.js");
 const {
   getAllUsers,
@@ -18,16 +19,17 @@ const {
   deleteNotification
 } = require("./users.controllers");
 
-// const { protect, restrictTo} = require("./../../Middlewares/Middlewares");
+const { protect, restrictTo} = require("./../Middlewares/Middlewares");
 const{ parser}=require('../utils/multer')
 
 const router = express.Router();
 
-// router.post("/register/:roleId", protect, restrictTo("administrator"), register);
-// router.post("/login", login);
-// router.put("/forgotpassword", forgotPassword);
-// router.put("/resetpassword/:token", resetPassword);
-// router.patch("/changepassword", protect, changePassword);
+router.post("/create-new-account/",register);
+router.post("/login", login);
+router.put("/forgotpassword", forgotPassword);
+router.put("/resetpassword/:token", resetPassword);
+router.put("/activate-account/:token", activateAccount);
+router.patch("/changepassword", protect, changePassword);
 router.get("/notifications",allNotifications)
 
 router.route("/").get(getAllUsers);
