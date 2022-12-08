@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         accountActivationToken:undefined,
         updatedAt: undefined,
         createdAt: undefined,
-        // isAssigned: undefined,
         password: undefined,
       };
     }

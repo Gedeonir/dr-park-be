@@ -88,7 +88,7 @@ const updateParking =async (req,res)=>{
 
         const parking = await Parking.findOne({where:{uuid}});
         if (!parking) {
-            res.status(403).json({
+            return res.status(403).json({
                 message:"No parking found!",
             })
         }
