@@ -34,7 +34,7 @@ const createAssignment = async(req,res)=>{
             parkingName:slotExists.parkingName,
             slotId:slotExists.uuid,
             Slot:slotExists.slotCode,
-            vehiclePlateNumber,
+            vehiclePlateNumber:"RAB 007 C",
             parkedAt:Date.now(),
 
         })
