@@ -1,5 +1,6 @@
 // @ts-nocheck
-const { User, Role } = require("./../../models");
+import { Role } from "../../models/role";
+import { User } from "../../models/user";
 const jwt = require("jsonwebtoken");
 const PassGenerator = require("generate-password");
 const sendEmail = require("../utils/Email");

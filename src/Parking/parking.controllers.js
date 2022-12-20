@@ -1,4 +1,4 @@
-const {Parking} = require('../../models');
+import { Parking } from "../../models/parking";
 
 const createParking = async(req,res)=>{
     try {
@@ -10,7 +10,7 @@ const createParking = async(req,res)=>{
               });
         }
 
-        const parkingExists = await Parking.findOne({where:{parkingName}});
+        const parkingExists = await Parking.findOne({parkingName:parkingName});
 
         if (parkingExists) {
             return res.status(403).json({
@@ -42,7 +42,7 @@ const createParking = async(req,res)=>{
 
 const getAllParkings = async (req, res) => {
     try {
-      const parkings = await Parking.findAndCountAll();
+      const parkings = await Parking.find();
       res.status(200).json({
         result: parkings.length,
         data: {
@@ -61,7 +61,7 @@ const getOneParking =async(req,res)=>{
     try {
         const uuid =req.params.uuid;
 
-        const oneParking = await Parking.findOne({where:{uuid}});
+        const oneParking = await Parking.findOne({_id:uuid});
         res.status(200).json({
             data:{
                 oneParking
@@ -86,7 +86,7 @@ const updateParking =async (req,res)=>{
               });
         }
 
-        const parking = await Parking.findOne({where:{uuid}});
+        const parking = await Parking.findOne({_id:uuid});
         if (!parking) {
             return res.status(403).json({
                 message:"No parking found!",
@@ -120,7 +120,7 @@ const deleteParking = async(req,res)=>{
     try {
         const uuid = req.params.uuid;
 
-        const parking = await Parking.findOne({where:{uuid}});
+        const parking = await Parking.findOne({_id:uuid});
 
         await parking.destroy();
         res.status(200).json({

@@ -1,72 +1,43 @@
 "use strict";
-const { Model } = require("sequelize");
-const parkingSlot = require("./parkingSlot");
-module.exports = (sequelize, DataTypes) => {
-  class Assignment extends Model {
-    static associate({ParkingSlot,Parking}) {
-      this.belongsTo(ParkingSlot, { foreignKey: "Slot", as: "parkingSlot" });
-      this.belongsTo(Parking, { foreignKey: "parking", as: "Parking" })
-    }
-
-    toJSON() {
-      return {
-        ...this.get(),
-        id: undefined,
-        updatedAt: undefined,
-        createdAt: undefined,
-      };
-    }
-  }
-  Assignment.init(
-    {
-      uuid: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
+import mongoose, { Schema } from "mongoose";
+const Assignment = mongoose.model(
+    "assignments",
+    new Schema({
       parking:{
-        type: DataTypes.STRING,
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"parkings",
+        required:true
       },
       parkingName:{
-        type: DataTypes.STRING,
+        type: String,
+        required:true
       },
       slotId:{
-        type: DataTypes.STRING,
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"parkingSlots",
+        required:true
       },
       Slot:{
-        type: DataTypes.STRING,
+        type: String,
+        required:true
       },
       vehiclePlateNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "Vehicle plate number must have a District" },
-          notEmpty: { msg: "Vehicle plate number must not be empty" },
-        },
+        type: String,
+        required:true,
         unique:true
       },
       parkedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
+        type: String,
       },
       leftAt: {
-        type: DataTypes.DATE,
+        type: String,
       },
       totalParkedTimeMinutes: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue:0
+        type: String,
       },
       totalPriceToPay: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue:0
+        type: String
       },
-    },
-    {
-      sequelize,
-      tableName: "assignments",
-      modelName: "Assignment",
-    }
+    })
   );
-  return Assignment;
-};
+  export {Assignment};

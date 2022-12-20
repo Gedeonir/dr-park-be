@@ -1,4 +1,4 @@
-const { User } = require("./../../models");
+import { User } from "../../models/user";
 const { Op } = require("sequelize");
 
 const jwt = require("jsonwebtoken");

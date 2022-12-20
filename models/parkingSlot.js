@@ -1,64 +1,34 @@
 "use strict";
-const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
-  class ParkingSlot extends Model {
-    static associate({Parking }) {
-      this.belongsTo(Parking, {foreignKey: 'parking',as: 'Parking'});
-    }
-
-    toJSON() {
-      return {
-        ...this.get(),
-        id: undefined,
-        updatedAt: undefined,
-        createdAt: undefined,
-      };
-    }
-  }
-  ParkingSlot.init(
-    {
-      uuid: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
-      slotCode: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "Slot must have a unique code" },
-          notEmpty: { msg: "slotCode must not be empty" },
-        },
-        unique: true,
-      },
-      slotSize: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "Slot must have size" },
-          notEmpty: { msg: "SlotSize must not be empty" },
-        },
-      },
-      parking:{
-        type: DataTypes.STRING,
-      },
-      parkingName:{
-        type: DataTypes.STRING,
-      },
-      status:{
-        type:DataTypes.STRING,
-        allowNull:false,
-        defaultValue:"Available",
-        validate:{
-          notNull:{msg:"Slot must have status"},
-          notEmpty:{msg:"status must not be empty"}
-        }
-      },
+import mongoose, { Schema } from "mongoose";
+const ParkingSlot = mongoose.model(
+  "parkingSlot",
+  new Schema({
+    slotCode: {
+      type: String,
+      required:true,
+      unique: true,
     },
-    {
-      sequelize,
-      tableName: "parkingSlots",
-      modelName: "ParkingSlot",
+    slotSize: {
+      type: String,
+      required:true
+    },
+    parking:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"parkings",
+      required:true
+    },
+    parkingName:{
+      type: String,
+    },
+    status:{
+      type:String,
+      required:true,
+      default:"Available",
+    },
+    sensor:{
+      type:String,
+      required:true,
     }
-  );
-  return ParkingSlot;
-};
+  })
+);
+export {ParkingSlot};

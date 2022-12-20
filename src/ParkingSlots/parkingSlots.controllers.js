@@ -1,11 +1,11 @@
-const {Parking,ParkingSlot}=require('../../models');
-
+import { Parking } from "../../models/parking";
+import { ParkingSlot } from "../../models/parkingSlot";
 const createParkingSlot=async(req,res)=>{
   try {
     const uuid= req.params.uuid;
 
-    const {slotCode,slotSize} = req.body;
-    const parking = await Parking.findOne({where:{uuid}});
+    const {slotCode,slotSize,sensor} = req.body;
+    const parking = await Parking.findOne({_id:uuid});
 
     if (!parking) {
         return res.status(404).json({
@@ -13,18 +13,27 @@ const createParkingSlot=async(req,res)=>{
         })
     }
 
-    const slotExists = await ParkingSlot.findOne({where:{slotCode:slotCode,parkingName:parking.parkingName}})
+    const slotExists = await ParkingSlot.findOne({slotCode:slotCode,parkingName:parking.parkingName})
     if (slotExists) {
         return res.status(403).json({
             message:`${parking.parkingName} already has slot ${slotCode}`
         })
     }
 
+    const sensorExist = await ParkingSlot.findOne({sensor:sensor,parkingName:parking.parkingName})
+
+    if (sensorExist) {
+      return res.status(403).json({
+          message:`${sensor} already has been already assigned to slot`
+      })
+    }
+
     const newParkingSlot = await ParkingSlot.create({
         slotCode,
         slotSize,
-        parking:parking.uuid,
-        parkingName:parking.parkingName
+        parking:parking._id,
+        parkingName:parking.parkingName,
+        sensor
     })
 
     res.status(201).json({
@@ -45,7 +54,7 @@ const createParkingSlot=async(req,res)=>{
 
 const getAllParkingSlots = async (req, res) => {
     try {
-      const parkingSlots = await ParkingSlot.findAndCountAll();
+      const parkingSlots = await ParkingSlot.find();
       res.status(200).json({
         result: parkingSlots.length,
         data: {
@@ -64,7 +73,7 @@ const getOneParkingSlot = async(req,res)=>{
   try {
     const uuid = req.params.uuid;
 
-    const slot = await ParkingSlot.findOne({where:{uuid}})
+    const slot = await ParkingSlot.findOne({_id:uuid})
     res.status(200).json({
       data:slot
     })
@@ -82,14 +91,14 @@ const updateParkingSlot = async(req,res)=>{
 
     const {slotCode,slotSize,status} = req.body;
 
-    const slot = await ParkingSlot.findOne({where:{uuid}});
+    const slot = await ParkingSlot.findOne({_id:uuid});
     if (!slot) {
       return res.status(404).json({
         message:"Parking slot not found!"
       })
     }
 
-    const DuplicateSlot = await ParkingSlot.findOne({where:{slotCode:slotCode,parkingName:slot.parkingName}})
+    const DuplicateSlot = await ParkingSlot.findOne({slotCode:slotCode,parkingName:slot.parkingName})
     if (DuplicateSlot) {
       return res.status(403).json({
         message:`${slot.parkingName} already has slot ${slotCode}`
@@ -120,8 +129,8 @@ const deleteSlot = async(req,res)=>{
   try {
     const uuid = req.params.uuid;
 
-    const slot = await ParkingSlot.findOne({where:{uuid}});
-    await slot.destroy();
+    const slot = await ParkingSlot.findByIdAndRemove({_id:uuid});
+
     res.status(200).json({
       message:"Parking slot deleted successfully"
     })
