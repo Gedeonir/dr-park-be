@@ -1,55 +1,28 @@
 "use strict";
-const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
-  class Notification extends Model {
-    static associate({ User }) {
-      this.belongsTo(User, { foreignKey: "receiver", as: "Receiver" });
-    }
-
-    toJSON() {
-      return {
-        ...this.get(),
-        id: undefined,
-        updatedAt: undefined,
-        createdAt: undefined,
-      };
-    }
-  }
-  Notification.init(
-    {
-      uuid: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
+import mongoose, { Schema } from "mongoose";
+const Notification = mongoose.model(
+    "notifications",
+    new Schema({
       title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "Notification must have title" },
-          notEmpty: { msg: "Title must not be empty" },
-        },
+        type: String,
+        required:true
       },
       content: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notNull: { msg: "Notification must have content message" },
-          notEmpty: { msg: "Content must not be empty" },
-        },
+        type: String,
+        required:true
+      },
+      receiverID:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"users",
+        required:true
       },
       receiver: {
-        type: DataTypes.STRING,
+        type: String,
       },
       isRead: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        type: Boolean,
+        default: false,
       },
-    },
-    {
-      sequelize,
-      tableName: "notifications",
-      modelName: "Notification",
-    }
+    })
   );
-  return Notification;
-};
+  export {Notification};

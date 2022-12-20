@@ -1,5 +1,5 @@
 // @ts-nocheck
-const { Role } = require("../../models");
+import { Role } from "../../models/role";
 
 const createRole = async (req, res) => {
   try {
@@ -11,7 +11,7 @@ const createRole = async (req, res) => {
       });
     }
 
-    const role = await Role.findOne({ where: { roleName } });
+    const role = await Role.findOne({ roleName:roleName });
 
     if (role) {
       return res.status(403).json({
@@ -20,7 +20,7 @@ const createRole = async (req, res) => {
     }
 
     const newRole = await Role.create({
-      roleName,
+      roleName:req.body.roleName,
     });
 
     res.status(201).json({
@@ -39,8 +39,7 @@ const createRole = async (req, res) => {
 
 const getAllRoles = async (req, res) => {
   try {
-    const roles = await Role.findAndCountAll();
-
+    const roles = await Role.find();
     res.status(200).json({
       result: roles.length,
       data: {
@@ -59,10 +58,7 @@ const getRole = async (req, res) => {
   try {
     const uuid = req.params.uuid;
 
-    const role = await Role.findOne({
-      where: { uuid },
-      include: ["user"],
-    });
+    const role = await Role.findOne({_id:uuid,include:['users'] });
     res.status(200).json({
       data: {
         role,
@@ -81,7 +77,7 @@ const updateRole = async (req, res) => {
     const uuid = req.params.uuid;
     const { roleName } = req.body;
 
-    const role = await Role.findOne({ where: { uuid } });
+    const role = await Role.findOne({_id:uuid });
     role.roleName = roleName;
 
     await role.save();
@@ -104,9 +100,7 @@ const deleteRole = async (req, res) => {
   try {
     const uuid = req.params.uuid;
 
-    const role = await Role.findOne({
-      where: { uuid },
-    });
+    const role = await Role.findOne({_id:uuid });
     await role.destroy();
 
     res.status(200).json({

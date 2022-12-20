@@ -1,9 +1,9 @@
-const {Assignment,Parking,ParkingSlot} = require('../../models');
-
+import { Assignment } from "../../models/assignments";
+import { ParkingSlot } from "../../models/parkingSlot";
 
 const getAllAssignments = async(req,res)=>{
     try {
-        const assignments = await Assignment.findAndCountAll();
+        const assignments = await Assignment.find();
         res.status(200).json({
           result: assignments.length,
           data: {
@@ -23,7 +23,7 @@ const createAssignment = async(req,res)=>{
         const {vehiclePlateNumber} = req.body;
         const uuid = req.params.uuid;
         
-        const slotExists = await ParkingSlot.findOne({where:{uuid}})
+        const slotExists = await ParkingSlot.findOne({_id:uuid})
         if (slotExists.status != 'Available') {
             return res.status(403).json({
                 message:"The parking is not available"
@@ -32,7 +32,7 @@ const createAssignment = async(req,res)=>{
         const newAssignment = await Assignment.create({
             parking:slotExists.parking,
             parkingName:slotExists.parkingName,
-            slotId:slotExists.uuid,
+            slotId:slotExists._id,
             Slot:slotExists.slotCode,
             vehiclePlateNumber:"RAB 007 C",
             parkedAt:Date.now(),
@@ -62,10 +62,10 @@ const unAssignSlot = async(req,res)=>{
     try {
         const uuid = req.params.uuid;
         const id = req.params.id;
-        const assignment = await Assignment.findOne({where:{uuid:id}});
+        const assignment = await Assignment.findOne({_id:id});
         assignment.leftAt = Date.now();
         await assignment.save();
-        const slotExists = await ParkingSlot.findOne({where:{uuid}});
+        const slotExists = await ParkingSlot.findOne({_id:uuid});
         slotExists.status= "Available";
         await slotExists.save();
         res.status(200).json({

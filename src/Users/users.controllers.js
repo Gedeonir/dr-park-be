@@ -1,5 +1,7 @@
 // @ts-nocheck
-const { User,Role,Notification } = require("../../models");
+import { Role } from "../../models/role";
+import { User } from "../../models/user";
+import { Notification } from "../../models/notifications";
 const jwt = require("jsonwebtoken");
 const emitter = require("../utils/Emitter");
 
@@ -24,7 +26,7 @@ const getUser = async (req, res) => {
   const uuid = req.params.uuid;
   try {
     const user = await User.findOne({
-      where: { uuid },
+      _id:uuid ,
       include: ["role"],
     });
     res.status(200).json({
@@ -53,7 +55,7 @@ const changeRole = async (req, res) => {
   }
   else{
     try {
-      const user = await User.findOne({ where: { uuid } });
+      const user = await User.findOne({_id:uuid ,});
       if(user.roleName == roleName){
         res.status(403).json({
           message:`The user is already an ${roleName}`,
@@ -65,12 +67,13 @@ const changeRole = async (req, res) => {
           content:`Hey ${user.name} your role has been changed from ${user.roleName} to ${role.roleName}.Your role now is ${role.roleName}`
         };
         user.roleName = role.roleName;
-        user.roleId = role.id;
+        user.roleId = role._id;
         await user.save();
         const notification = await Notification.create({
           title:notificationBody.title,
           content:notificationBody.content,
-          receiver:user.uuid
+          receiverID:user._id,
+          receiver:user.email
         });
 
         emitter.emit("notification request", notification);
@@ -99,13 +102,13 @@ const allNotifications = async(req,res)=>{
   const decoded = jwt.verify(token, process.env.JWT_SECRETE);
   const uuid = decoded.uuid;
   try {
-    const user = await User.findOne({where: {uuid:uuid} })
+    const user = await User.find()
     if(!user){
       return res.status(404).json({
         message:"No user with that ID found"
       });
     }
-    const notifications = await Notification.findAndCountAll({where:{receiver:uuid},order: [['createdAt', 'DESC']]});
+    const notifications = await Notification.find({_id:uuid}).sort({time:-1});
     res.status(200).json({
       status:'success status',
       count: notifications.length,
@@ -129,10 +132,10 @@ const readNotification = async(req,res)=>{
   const token = req.headers.authorization.split(" ")[1];
 
   const decoded = jwt.verify(token, process.env.JWT_SECRETE);
-  const userId = decoded.uuid;
+  const userId = decoded._id;
   
   try {
-    const notification = await Notification.findOne({where:{receiver:userId,uuid:notificationId}});
+    const notification = await Notification.findOne({receiverID:userId,_id:notificationId});
     if (!notification) {
       return res.status(404).json({
         message:"Notification not found"
@@ -166,7 +169,7 @@ const deleteNotification = async(req,res)=>{
   const userId = decoded.uuid;
   
   try {
-    const notification = await Notification.findOne({where:{receiver:userId,uuid:notificationId}});
+    const notification = await Notification.findOne({receiverID:userId,_id:notificationId});
     if (!notification) {
       return res.status(404).json({
         message:"Notification not found"
@@ -191,7 +194,7 @@ const updateUser = async (req, res) => {
   const {name,  profilePicture,idNumber,district,sector,cell,gender,email,permitId,telNumber,carplate,capacity,vehicletype,
   } = req.body;
   try {
-    const user = await User.findOne({ where: { uuid } });
+    const user = await User.findOne({_id:uuid});
 
     user.name = name;
     user.profilePicture  = profilePicture;
@@ -226,9 +229,9 @@ const updateUser = async (req, res) => {
 const updateProfile = async (req, res,next) => {
   try {
     const { uuid } = req.params;
-    const {name,  profilePicture,idNumber,district,sector,cell,gender,email,permitId,telNumber,carplate,capacity,vehicletype,
+    const {name,  profilePicture,district,sector,cell,gender,email,telNumber
     } = req.body;
-    const user = await User.findOne({ where: { uuid } });
+    const user = await User.findOne({_id:uuid});
     if (!user) {
       return res.status(404).json({message: "User Not Found"});
     }
@@ -272,9 +275,7 @@ const updateProfile = async (req, res,next) => {
 const deleteUser = async (req, res) => {
   const uuid = req.params.uuid;
   try {
-    const user = await User.findOne({
-      where: { uuid },
-    });
+    const user = await User.findOne({_id:uuid});
 
     await user.destroy();
 

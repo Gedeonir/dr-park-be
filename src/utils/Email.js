@@ -1,8 +1,6 @@
 // @ts-nocheck
 const nodemailer = require("nodemailer");
-const dotenv = require("dotenv");
-
-dotenv.config();
+import 'dotenv/config'
 
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
