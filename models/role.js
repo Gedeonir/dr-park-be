@@ -1,5 +1,6 @@
 "use strict";
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 const Role = mongoose.model(
   "roles",
   new Schema({
@@ -9,4 +10,4 @@ const Role = mongoose.model(
     }
   })
 );
-export {Role};
+module.exports = Role;

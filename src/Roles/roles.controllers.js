@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Role } from "../../models/role";
+const  Role = require("../../models/role");
 
 const createRole = async (req, res) => {
   try {
