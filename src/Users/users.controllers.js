@@ -1,13 +1,13 @@
 // @ts-nocheck
-import { Role } from "../../models/role";
-import { User } from "../../models/user";
-import { Notification } from "../../models/notifications";
+const { Role } =require("../../models/role");
+const { User } =require("../../models/user");
+const{ Notification } =require("../../models/notifications");
 const jwt = require("jsonwebtoken");
 const emitter = require("../utils/Emitter");
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAndCountAll();
+    const users = await User.find();
     res.status(200).json({
       result: users.length,
       data: {

@@ -1,5 +1,6 @@
 "use strict";
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 const ParkingSlot = mongoose.model(
   "parkingSlot",
   new Schema({
@@ -31,4 +32,4 @@ const ParkingSlot = mongoose.model(
     }
   })
 );
-export {ParkingSlot};
+module.exports = ParkingSlot;

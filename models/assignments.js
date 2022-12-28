@@ -1,5 +1,6 @@
 "use strict";
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 const Assignment = mongoose.model(
     "assignments",
     new Schema({
@@ -40,4 +41,4 @@ const Assignment = mongoose.model(
       },
     })
   );
-  export {Assignment};
+  module.exports = Assignment;

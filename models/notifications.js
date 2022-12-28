@@ -1,5 +1,6 @@
 "use strict";
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 const Notification = mongoose.model(
     "notifications",
     new Schema({
@@ -25,4 +26,4 @@ const Notification = mongoose.model(
       },
     })
   );
-  export {Notification};
+  module.exports = Notification;

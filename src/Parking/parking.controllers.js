@@ -1,4 +1,4 @@
-import { Parking } from "../../models/parking";
+const Parking = require("../../models/parking");
 
 const createParking = async(req,res)=>{
     try {
@@ -42,7 +42,7 @@ const createParking = async(req,res)=>{
 
 const getAllParkings = async (req, res) => {
     try {
-      const parkings = await Parking.find();
+      const parkings = await Parking.find({});
       res.status(200).json({
         result: parkings.length,
         data: {
