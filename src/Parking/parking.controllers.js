@@ -5,7 +5,7 @@ const createParking = async(req,res)=>{
     try {
         const{parkingName,district,sector,province,location,prices}=req.body;
 
-        if (!parkingName||!district||!sector||!province||!location||prices) {
+        if (!parkingName||!district||!sector||!province||!location||!prices) {
             return res.status(403).json({
                 message: "All fields are required",
               });
