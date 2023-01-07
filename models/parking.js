@@ -23,7 +23,11 @@ const Parking = mongoose.model(
     },
     location:{
       type: String,
-     required:true
+      required:true
+    },
+    prices:{
+      type: String,
+      required:true
     },
   })
 );

@@ -1,10 +1,11 @@
 const Parking = require("../../models/parking");
+const ParkingSlot = require("../../models/parkingSlot");
 
 const createParking = async(req,res)=>{
     try {
-        const{parkingName,district,sector,province,location}=req.body;
+        const{parkingName,district,sector,province,location,prices}=req.body;
 
-        if (!parkingName||!district||!sector||!province||!location) {
+        if (!parkingName||!district||!sector||!province||!location||prices) {
             return res.status(403).json({
                 message: "All fields are required",
               });
@@ -23,7 +24,8 @@ const createParking = async(req,res)=>{
             district,
             sector,
             province,
-            location
+            location,
+            prices
         })
 
         res.status(201).json({
@@ -120,11 +122,13 @@ const deleteParking = async(req,res)=>{
     try {
         const uuid = req.params.uuid;
 
-        const parking = await Parking.findOne({_id:uuid});
+        const parking = await Parking.findByIdAndRemove({_id:uuid});
 
-        await parking.destroy();
+        const parkingSlots = await ParkingSlot.deleteMany({parking:uuid}).populate("parking");
+
         res.status(200).json({
-            message:"Parking deleted succesfully"
+            message:"Parking deleted succesfully",
+            parkingSlots
         })
     } catch (error) {
         res.status(404).json({
