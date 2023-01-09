@@ -15,7 +15,7 @@ const createParkingSlot=async(req,res)=>{
 
     const slotExists = await ParkingSlot.findOne({slotCode:slotCode,parkingName:parking.parkingName})
     if (slotExists) {
-        return res.status(404).json({
+        return res.status(409).json({
             slotExistsMessage:`${parking.parkingName} already has slot ${slotCode}`
         })
     }
@@ -23,7 +23,7 @@ const createParkingSlot=async(req,res)=>{
     const sensorExist = await ParkingSlot.findOne({sensor:sensor,parkingName:parking.parkingName})
 
     if (sensorExist) {
-      return res.status(404).json({
+      return res.status(409).json({
           sensorExistsMessage:`${sensor} already has been already assigned to slot`
       })
     }
