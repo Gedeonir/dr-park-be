@@ -1,5 +1,6 @@
 "use strict";
-import mongoose, { Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
 const Parking = mongoose.model(
   "parkings",
   new Schema({
@@ -39,9 +40,13 @@ const Parking = mongoose.model(
     
     location:{
       type: String,
-     required:true
+      required:true
+    },
+    prices:{
+      type: String,
+      required:true
     },
   })
 );
 
-export {Parking};
+module.exports = Parking;

@@ -1,5 +1,5 @@
-import { Parking } from "../../models/parking";
-import { ParkingSlot } from "../../models/parkingSlot";
+const  Parking  = require("../../models/parking");
+const  ParkingSlot =require("../../models/parkingSlot");
 const createParkingSlot=async(req,res)=>{
   try {
     const uuid= req.params.uuid;
@@ -57,20 +57,27 @@ const createParkingSlot=async(req,res)=>{
 }
 
 const getAllParkingSlots = async (req, res) => {
-    try {
-      const parkingSlots = await ParkingSlot.find();
-      res.status(200).json({
-        result: parkingSlots.length,
-        data: {
-          parkingSlots: parkingSlots,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({
-        message:"Unable to get parking slots",
-        err: error.message,
-      });
+  const uuid= req.params.uuid;
+
+  try {
+    const parkingSlots = await ParkingSlot.find({parking:uuid});
+    if (!parkingSlots) {
+      return res.status(404).json({
+        message:"Parking has no slots"
+      })
     }
+    res.status(200).json({
+      result: parkingSlots.length,
+      data: {
+        parkingSlots: parkingSlots,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:"Unable to get parking slots",
+      err: error.message,
+    });
+  }
 };
 
 const getOneParkingSlot = async(req,res)=>{

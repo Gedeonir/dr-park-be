@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { Role } from "../../models/role";
-import { User } from "../../models/user";
-import { Notification } from "../../models/notifications";
+const { Role } =require("../../models/role");
+const { User } =require("../../models/user");
+const{ Notification } =require("../../models/notifications");
 const jwt = require("jsonwebtoken");
 const emitter = require("../utils/Emitter");
 

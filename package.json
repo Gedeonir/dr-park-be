@@ -1,6 +1,7 @@
 {
   "name": "dr-park-be",
   "version": "1.0.0",
+  "type":"commonjs",
   "description": "Dr park Backend Project Setup",
   "main": "app.js",
   "scripts": {
