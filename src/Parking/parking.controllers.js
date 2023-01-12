@@ -216,7 +216,7 @@ const bookParking = async(req,res)=>{
     const token = req.headers.authorization.split(" ")[1];
 
     const decoded = jwt.verify(token, process.env.JWT_SECRETE);
-    const {checkInTime,checkInDate,checkOutDate,checkOutTime,phoneNumber,vehiclePlateNumber} =  req.body
+    const {checkInTime,Date,checkOutTime,phoneNumber,vehiclePlateNumber} =  req.body
     try {
         const findBooking = await Booking.findOne({email:decoded.email,status:'pending'})
 
@@ -253,10 +253,8 @@ const bookParking = async(req,res)=>{
             vehiclePlateNumber,
             email:decoded.email,
             names:decoded.name,
-            checkInTime,
-            checkInDate,
+            Date,
             checkOutTime,
-            checkOutDate,
             phoneNumber
         })
 

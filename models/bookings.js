@@ -32,11 +32,8 @@ const Booking = mongoose.model(
       names: {
         type: String,
       },
-      checkInDate: {
+      Date: {
         type: String,
-      },
-      checkoutDate: {
-        type: String
       },
       checkInTime: {
         type: String,
