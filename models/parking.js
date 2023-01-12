@@ -20,6 +20,23 @@ const Parking = mongoose.model(
       type: String,
       required:true
     },
+    capacity: {
+      type: String,
+      required:true,
+      default:0
+    },
+    slotAvailable: {
+      type: String,
+      required:true,
+      default:0
+    },
+
+    slotOccupied: {
+      type: String,
+      required:true,
+      default:0
+    },
+    
     location:{
       type: String,
      required:true

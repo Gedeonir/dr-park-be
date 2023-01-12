@@ -39,9 +39,7 @@ const register = async (req, res) => {
 
     const hashedPass = await bcrypt.hash(password, 12);
 
-    const userEmailExist = await User.findOne({
-      where: { email },
-    });
+    const userEmailExist = await User.findOne({email: email});
 
     if (userEmailExist) {
       return res.status(403).json({
@@ -142,7 +140,7 @@ const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ email:email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({

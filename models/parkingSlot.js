@@ -6,7 +6,6 @@ const ParkingSlot = mongoose.model(
     slotCode: {
       type: String,
       required:true,
-      unique: true,
     },
     slotSize: {
       type: String,

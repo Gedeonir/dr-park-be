@@ -43,6 +43,10 @@ const createParkingSlot=async(req,res)=>{
       },
     });
 
+    await parking.capacity++
+    await parking.slotAvailable++
+    await parking.save()
+
 
   } catch (error) {
     res.status(500).json({

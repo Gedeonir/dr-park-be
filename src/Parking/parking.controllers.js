@@ -134,6 +134,28 @@ const deleteParking = async(req,res)=>{
     }
 }    
 
+
+const getParkingsByLocation=async(req,res)=>{
+    try {
+        const location = req.params.location
+        const findParking = await Parking.find({location:location});
+
+        if (findParking.length === 0) {
+            return res.status(404).json({
+                message:"No parkings found in that location!",
+            })
+        }
+
+        return res.status(200).json({
+            parkingsByLocation:findParking
+        })
+    } catch (error) {
+        res.status(404).json({
+            message:"Error occured",
+            error:error.message
+        })
+    }
+}
   
 
-module.exports={createParking,getAllParkings,getOneParking,updateParking,deleteParking};
+module.exports={createParking,getAllParkings,getOneParking,updateParking,deleteParking,getParkingsByLocation};

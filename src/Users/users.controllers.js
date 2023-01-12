@@ -7,7 +7,7 @@ const emitter = require("../utils/Emitter");
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAndCountAll();
+    const users = await User.find();
     res.status(200).json({
       result: users.length,
       data: {

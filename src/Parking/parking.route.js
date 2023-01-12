@@ -1,6 +1,6 @@
 const express = require("express");
 
-import { getAllParkings,createParking,getOneParking,updateParking,deleteParking } from "./parking.controllers";
+import { getAllParkings,createParking,getOneParking,updateParking,deleteParking,getParkingsByLocation } from "./parking.controllers";
 
 import { createParkingSlot,deleteSlot,getAllParkingSlots,getOneParkingSlot, updateParkingSlot } from "../ParkingSlots/parkingSlots.controllers";
 
@@ -11,5 +11,6 @@ router.post("/register-new-parking",createParking);
 router.route("/:uuid").get(getOneParking).patch(updateParking).delete(deleteParking)
 router.route("/:uuid/slots").post(createParkingSlot).get(getAllParkingSlots)
 router.route("/slots/:uuid").get(getOneParkingSlot).patch(updateParkingSlot).delete(deleteSlot)
+router.route('/findByLocation/:location').get(getParkingsByLocation)
 
 module.exports = router

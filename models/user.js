@@ -37,12 +37,12 @@ const User = mongoose.model(
       type: String,
       required:true
     },
-    UserId: {
+    roleId: {
       type: mongoose.Schema.Types.ObjectId,
         ref:"Users",
         required:true
     },
-    UserName: {
+    roleName: {
       type: String,
     },
     passwordResetToken: {

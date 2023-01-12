@@ -49,6 +49,10 @@ const createAssignment = async(req,res)=>{
             },
           });
 
+          await parking.slotOccupied++
+          await parking.slotAvailable--
+          await parking.save()
+
 
     } catch (error) {
         res.status(500).json({
@@ -71,6 +75,10 @@ const unAssignSlot = async(req,res)=>{
         res.status(200).json({
             message:"Slot unAssigned sucessfully"
         })
+
+        await parking.slotOccupied--
+        await parking.slotAvailable++
+        await parking.save()
     } catch (error) {
         res.status(500).json({
             message:"Unable to unAssign slot",
