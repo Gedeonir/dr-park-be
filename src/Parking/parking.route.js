@@ -10,6 +10,6 @@ router.post("/register-new-parking",createParking);
 router.route("/:uuid").get(getOneParking).patch(updateParking).delete(deleteParking)
 router.route("/:uuid/slots").post(createParkingSlot).get(getAllParkingSlots)
 router.route("/slots/:uuid").get(getOneParkingSlot).patch(updateParkingSlot).delete(deleteSlot)
-router.route('/findByLocation/:location').get(getParkingsByLocation)
+router.route('/findParkingBy/parking').get(getParkingsByLocation)
 
 module.exports = router

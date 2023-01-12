@@ -141,19 +141,59 @@ const deleteParking = async(req,res)=>{
 
 const getParkingsByLocation=async(req,res)=>{
     try {
-        const {wordEntered} = req.body
+        const {wordEntered,filterColumn} = req.body
+        let usedAttribute;
         const parkings = await Parking.find({});
 
-        if(location){
+        if(wordEntered && !filterColumn){
             const parkingResults = parkings.filter((value)=>{
                 return(
-                    value.location.toString().toLowerCase().includes(location.toString().toLowerCase())
+                    value.location.toString().toLowerCase().includes(wordEntered.toString().toLowerCase())||
+                    value.parkingName.toString().toLowerCase().includes(wordEntered.toString().toLowerCase())||
+                    value.district.toString().toLowerCase().includes(wordEntered.toString().toLowerCase())||
+                    value.sector.toString().toLowerCase().includes(wordEntered.toString().toLowerCase())||
+                    value.province.toString().toLowerCase().includes(wordEntered.toString().toLowerCase())
                 )
             })
             return res.status(200).json({
                 parkings:parkingResults
             })
         }
+
+        if (wordEntered && filterColumn) {
+            const parkingResults = parkings.filter(
+              (value) => {
+                let arr = Object.keys(value._id.toJSON());
+                let arr1 = Object.keys(value.toJSON());
+    
+                let allKeys= arr.concat(arr1);
+
+    
+                for (let i = 0; i < allKeys.length; i++) {
+                  if (allKeys[i].toLowerCase() == filterColumn.toLowerCase()) {
+                    usedAttribute = allKeys[i];
+                  }
+                }
+    
+                if (arr.includes(usedAttribute)) {
+                  return value._id[usedAttribute]
+                    .toString()
+                    .toLowerCase()
+                    .includes(wordEntered.toString().toLowerCase());
+                } else if (arr1.includes(usedAttribute)) {
+                  return value[usedAttribute]
+                    .toString()
+                    .toLowerCase()
+                    .includes(wordEntered.toString().toLowerCase());
+                } else {
+                  return [];
+                }
+              }
+            );
+            return res.status(200).json({
+                parkings:parkingResults
+            })
+          }
 
         return res.status(200).json({
             parkings
