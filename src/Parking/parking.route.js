@@ -1,7 +1,6 @@
 const express = require("express");
 
-import { getAllParkings,createParking,getOneParking,updateParking,deleteParking,getParkingsByLocation } from "./parking.controllers";
-
+const{ getAllParkings,createParking,getOneParking,updateParking,deleteParking,getParkingsByLocation } =require( "./parking.controllers")
 const { createParkingSlot,deleteSlot,getAllParkingSlots,getOneParkingSlot, updateParkingSlot } = require ("../ParkingSlots/parkingSlots.controllers");
 
 const router = express.Router();

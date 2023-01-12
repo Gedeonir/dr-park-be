@@ -141,17 +141,22 @@ const deleteParking = async(req,res)=>{
 
 const getParkingsByLocation=async(req,res)=>{
     try {
-        const location = req.params.location
-        const findParking = await Parking.find({location:location});
+        const {wordEntered} = req.body
+        const parkings = await Parking.find({});
 
-        if (findParking.length === 0) {
-            return res.status(404).json({
-                message:"No parkings found in that location!",
+        if(location){
+            const parkingResults = parkings.filter((value)=>{
+                return(
+                    value.location.toString().toLowerCase().includes(location.toString().toLowerCase())
+                )
+            })
+            return res.status(200).json({
+                parkings:parkingResults
             })
         }
 
         return res.status(200).json({
-            parkingsByLocation:findParking
+            parkings
         })
     } catch (error) {
         res.status(404).json({
