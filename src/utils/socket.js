@@ -4,7 +4,7 @@ const socketIO = require('socket.io')({
     }
 })
 const jwt = require("jsonwebtoken");
-const {Notification} = require('../../models')
+const {Notification} = require('../../models/notifications')
 const emitter = require('./Emitter')
 
 const tokenVerification = (token)=>{

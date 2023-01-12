@@ -1,7 +1,7 @@
 {
   "name": "dr-park-be",
   "version": "1.0.0",
-  "type":"commonjs",
+  "type": "commonjs",
   "description": "Dr park Backend Project Setup",
   "main": "app.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "cloudinary": "^1.32.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
+    "email-templates": "^10.0.1",
     "express": "^4.17.3",
     "generate-password": "^1.7.0",
     "i18next": "^21.6.16",
@@ -40,6 +41,7 @@
     "nodemailer": "^6.8.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
+    "pug": "^3.0.2",
     "sequelize": "^6.19.0",
     "socket.io": "^4.5.4",
     "swagger-jsdoc": "^6.2.0",

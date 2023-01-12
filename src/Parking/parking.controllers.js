@@ -1,5 +1,10 @@
 const Parking = require("../../models/parking");
 const ParkingSlot = require("../../models/parkingSlot");
+const Booking = require("../../models/bookings")
+const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/Email");
+const emitter = require("../utils/Emitter");
+
 
 const createParking = async(req,res)=>{
     try {
@@ -205,6 +210,137 @@ const getParkingsByLocation=async(req,res)=>{
         })
     }
 }
+
+const bookParking = async(req,res)=>{
+    const uuid=req.params.uuid
+    const token = req.headers.authorization.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRETE);
+    const {checkInTime,checkInDate,checkOutDate,checkOutTime,phoneNumber,vehiclePlateNumber} =  req.body
+    try {
+        const findBooking = await Booking.findOne({email:decoded.email,status:'pending'})
+
+        if(findBooking){
+            return res.status(404).json({
+                message:"You still have booking in progress"
+            })
+        }
+
+        const oneParking = await Parking.findOne({_id:uuid});
+
+
+        if (!oneParking) {
+            return res.status(404).json({
+                message:"No parking found!"
+            })
+        }
+
+        const slot = await ParkingSlot.findOne({parking:oneParking._id,status:'Available'});
+
+        console.log(slot)
+
+        if(!slot){
+            return res.status(404).json({
+                message:"Parking have no available slots!"
+            })
+        }
+
+        const booking = await Booking.create({
+            parking:oneParking._id,
+            parkingName:oneParking.parkingName,
+            slotId:slot._id,
+            slot:slot.slotCode,
+            vehiclePlateNumber,
+            email:decoded.email,
+            names:decoded.name,
+            checkInTime,
+            checkInDate,
+            checkOutTime,
+            checkOutDate,
+            phoneNumber
+        })
+
+
+        const message = `
+            Dear ${decoded.name},
+                You booked parking from ${checkInDate},${checkInTime} to ${checkOutDate},${checkOutTime}
+            `;
+            await sendEmail({
+            email: decoded.email,
+            subject: "Booking details information.",
+            message,
+            });
+
+            const notificationBody = {
+                title:"Booking",
+                content:`You have Booked Slot ${slot.slotCode} from ${oneParking.parkingName}`
+              };
+              user.roleName = role.roleName;
+              user.roleId = role._id;
+              await user.save();
+              const notification = await Notification.create({
+                booking:booking._id,
+                title:notificationBody.title,
+                content:notificationBody.content,
+                receiverID:user._id,
+                receiver:user.email
+              });
+      
+              emitter.emit("notification request", notification);
+
+        return res.status(200).json({
+            message:`you have Booked Slot ${slot.slotCode} from ${oneParking.parkingName}`,
+            data:{
+                booking
+            }
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message:"Error occured",
+            error:error.message
+        })
+    }
+}
+
+
+const getAllBookings = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRETE);
+    try {
+      const bookings = await Booking.find({email:decoded.email});
+      res.status(200).json({
+        result: bookings.length,
+        data: {
+          bookings: bookings,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message:"Unable to get bookings",
+        err: error.message,
+      });
+    }
+};
+
+const getOneBooking =async(req,res)=>{
+    try {
+        const uuid =req.params.uuid;
+
+        const oneBooking = await Booking.findOne({_id:uuid});
+        res.status(200).json({
+            data:{
+                oneBooking
+            }
+        })
+    } catch (error) {
+        res.status(404).json({
+            message:"No parking found!",
+            error:error.message
+        })
+    }
+}
   
 
-module.exports={createParking,getAllParkings,getOneParking,updateParking,deleteParking,getParkingsByLocation};
+module.exports={createParking,getAllParkings,getOneParking,updateParking,deleteParking,getParkingsByLocation,bookParking,getAllBookings,getOneBooking};

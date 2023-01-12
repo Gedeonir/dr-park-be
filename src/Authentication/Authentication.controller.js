@@ -60,7 +60,7 @@ const register = async (req, res) => {
       accountActivationToken:ACTIVATE_TOKEN
     });
 
-    const URL = `https://localhost:${process.env.PORT}/activateAccount/${ACTIVATE_TOKEN}`;
+    const URL = `<a>https://dr-park-be-production.up.railway.app/activateAccount/${ACTIVATE_TOKEN}</a>`;
     const message = `
     Dear ${newUser.name},
     Congratulations, you are most welcome to Dr-park app. please use the link to verify your account:${URL}, your username and password are the following: username:${newUser.email}, Password:${password}.
